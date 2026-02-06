@@ -1,0 +1,16 @@
+stages:
+  train:
+    cmd: ./.venv/bin/python train_with_mlflow.py
+    deps:
+      - train_with_mlflow.py
+      - avito_car_dataset_ALL.csv
+      - params.yaml
+    params:
+      - train
+      - model
+    outs:
+      - car_model.pkl
+      - scaler.pkl
+      - feature_info.json
+      - price_scaler_info.json
+      - encoders.pkl
