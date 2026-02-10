@@ -18,7 +18,7 @@ import seaborn as sns
 from datetime import datetime
 
 # Configuration MLflow
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("file:./mlflow/mlruns")
 EXPERIMENT_NAME = "car_price_prediction"
 mlflow.set_experiment(EXPERIMENT_NAME)
 
@@ -35,7 +35,7 @@ class CarPricePipeline:
         self.encoders = {}
         self.target_scaler = None
         
-    def load_data(self, filepath='avito_car_dataset_ALL.csv'):
+    def load_data(self, filepath='data/raw/avito_car_dataset_ALL.csv'):
         """Chargement des données"""
         print("📂 Chargement des données...")
         df = pd.read_csv(filepath, encoding='latin1')
@@ -122,8 +122,8 @@ class CarPricePipeline:
             self.encoders[col] = le
         
         # Save encoders
-        joblib.dump(self.encoders, 'encoders.pkl')
-        mlflow.log_artifact('encoders.pkl')
+        joblib.dump(self.encoders, 'models/encoders.pkl')
+        mlflow.log_artifact('models/encoders.pkl')
         
         # Scale numerical features only
         self.scaler = StandardScaler()
@@ -141,18 +141,18 @@ class CarPricePipeline:
             'categorical_cols': categorical_cols,
             'numerical_cols': numerical_cols
         }
-        with open('feature_info.json', 'w') as f:
+        with open('artifacts/feature_info.json', 'w') as f:
             json.dump(feature_info, f, indent=4)
-        mlflow.log_artifact('feature_info.json')
+        mlflow.log_artifact('artifacts/feature_info.json')
         
         # Save price scaler info
         price_scaler_info = {
             'mean': float(self.target_scaler.mean_[0]),
             'scale': float(self.target_scaler.scale_[0])
         }
-        with open('price_scaler_info.json', 'w') as f:
+        with open('artifacts/price_scaler_info.json', 'w') as f:
             json.dump(price_scaler_info, f, indent=4)
-        mlflow.log_artifact('price_scaler_info.json')
+        mlflow.log_artifact('artifacts/price_scaler_info.json')
         
         return X_scaled, y_scaled, feature_names
     
@@ -230,8 +230,8 @@ class CarPricePipeline:
         }).sort_values('importance', ascending=False)
         
         # Save and log feature importance
-        feature_importance.to_csv('feature_importance.csv', index=False)
-        mlflow.log_artifact('feature_importance.csv')
+        feature_importance.to_csv('artifacts/feature_importance.csv', index=False)
+        mlflow.log_artifact('artifacts/feature_importance.csv')
         
         print("\n🔝 Top 10 Features:")
         for idx, row in feature_importance.head(10).iterrows():
@@ -244,8 +244,8 @@ class CarPricePipeline:
         plt.xlabel('Importance')
         plt.title('Top 15 Feature Importances')
         plt.tight_layout()
-        plt.savefig('feature_importance.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('feature_importance.png')
+        plt.savefig('artifacts/feature_importance.png', dpi=100, bbox_inches='tight')
+        mlflow.log_artifact('artifacts/feature_importance.png')
         plt.close()
         
         # Plot predictions vs actual
@@ -256,8 +256,8 @@ class CarPricePipeline:
         plt.ylabel('Predicted (scaled)')
         plt.title(f'Predictions vs Actual (Test Set)\nR² = {test_r2:.4f}')
         plt.tight_layout()
-        plt.savefig('predictions_plot.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('predictions_plot.png')
+        plt.savefig('artifacts/predictions_plot.png', dpi=100, bbox_inches='tight')
+        mlflow.log_artifact('artifacts/predictions_plot.png')
         plt.close()
         
         # Residuals plot
@@ -269,8 +269,8 @@ class CarPricePipeline:
         plt.ylabel('Residuals')
         plt.title('Residual Plot')
         plt.tight_layout()
-        plt.savefig('residuals_plot.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('residuals_plot.png')
+        plt.savefig('artifacts/residuals_plot.png', dpi=100, bbox_inches='tight')
+        mlflow.log_artifact('artifacts/residuals_plot.png')
         plt.close()
         
         return X_train, X_test, y_train, y_test
@@ -280,12 +280,12 @@ class CarPricePipeline:
         print("💾 Sauvegarde du modèle...")
         
         # Save with joblib (for Streamlit)
-        joblib.dump(self.model, 'car_model.pkl')
-        joblib.dump(self.scaler, 'scaler.pkl')
+        joblib.dump(self.model, 'models/car_model.pkl')
+        joblib.dump(self.scaler, 'models/scaler.pkl')
         
         # Log artifacts to MLflow
-        mlflow.log_artifact('car_model.pkl')
-        mlflow.log_artifact('scaler.pkl')
+        mlflow.log_artifact('models/car_model.pkl')
+        mlflow.log_artifact('models/scaler.pkl')
         
         # Log model to MLflow (for model registry)
         mlflow.sklearn.log_model(
@@ -317,7 +317,7 @@ class CarPricePipeline:
             print("✅ Pipeline terminé avec succès!")
             print("="*50)
             print(f"\n🔗 MLflow UI: mlflow ui")
-            print(f"📂 Artifacts: ./mlruns")
+            print(f"📂 Artifacts: ./mlflow/mlruns")
             print(f"\n💡 Pour voir les résultats:")
             print(f"   mlflow ui")
             print(f"   Puis ouvrir: http://localhost:5000")

@@ -27,11 +27,11 @@ class TestStreamlitIntegration:
     def artifacts_exist(self):
         """Vérifier que tous les artifacts existent"""
         required_files = [
-            'car_model.pkl',
-            'scaler.pkl',
-            'feature_info.json',
-            'price_scaler_info.json',
-            'avito_car_dataset_ALL.csv'
+            'models/car_model.pkl',
+            'models/scaler.pkl',
+            'artifacts/feature_info.json',
+            'artifacts/price_scaler_info.json',
+            'data/raw/avito_car_dataset_ALL.csv'
         ]
         
         for file in required_files:
@@ -41,19 +41,19 @@ class TestStreamlitIntegration:
     
     def test_model_loading(self, artifacts_exist):
         """Tester le chargement du modèle"""
-        model = joblib.load('car_model.pkl')
+        model = joblib.load('models/car_model.pkl')
         assert model is not None
         assert hasattr(model, 'predict')
     
     def test_scaler_loading(self, artifacts_exist):
         """Tester le chargement du scaler"""
-        scaler = joblib.load('scaler.pkl')
+        scaler = joblib.load('models/scaler.pkl')
         assert scaler is not None
         assert hasattr(scaler, 'transform')
     
     def test_feature_info_loading(self, artifacts_exist):
         """Tester le chargement de feature_info"""
-        with open('feature_info.json', 'r') as f:
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
         
         assert 'feature_names' in feature_info
@@ -63,7 +63,7 @@ class TestStreamlitIntegration:
     
     def test_price_scaler_info_loading(self, artifacts_exist):
         """Tester le chargement de price_scaler_info"""
-        with open('price_scaler_info.json', 'r') as f:
+        with open('artifacts/price_scaler_info.json', 'r') as f:
             price_scaler_info = json.load(f)
         
         assert 'mean' in price_scaler_info
@@ -77,15 +77,15 @@ class TestStreamlitIntegration:
             from sklearn.preprocessing import LabelEncoder
             
             # Load artifacts
-            model = joblib.load('car_model.pkl')
-            scaler = joblib.load('scaler.pkl')
-            with open('feature_info.json', 'r') as f:
+            model = joblib.load('models/car_model.pkl')
+            scaler = joblib.load('models/scaler.pkl')
+            with open('artifacts/feature_info.json', 'r') as f:
                 feature_info = json.load(f)
-            with open('price_scaler_info.json', 'r') as f:
+            with open('artifacts/price_scaler_info.json', 'r') as f:
                 price_scaler_info = json.load(f)
             
             # Load training data for encoders
-            df_full = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+            df_full = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
             
             # Apply preprocessing
             for col in ['Origine', 'Première main', 'État']:
@@ -173,10 +173,10 @@ class TestStreamlitIntegration:
         try:
             from sklearn.preprocessing import LabelEncoder
             
-            model = joblib.load('car_model.pkl')
-            with open('feature_info.json', 'r') as f:
+            model = joblib.load('models/car_model.pkl')
+            with open('artifacts/feature_info.json', 'r') as f:
                 feature_info = json.load(f)
-            with open('price_scaler_info.json', 'r') as f:
+            with open('artifacts/price_scaler_info.json', 'r') as f:
                 price_scaler_info = json.load(f)
             
             # Test avec des valeurs extrêmes
@@ -197,10 +197,10 @@ class TestStreamlitIntegration:
     def test_prediction_consistency(self, artifacts_exist):
         """Tester la cohérence des prédictions"""
         try:
-            model = joblib.load('car_model.pkl')
-            with open('feature_info.json', 'r') as f:
+            model = joblib.load('models/car_model.pkl')
+            with open('artifacts/feature_info.json', 'r') as f:
                 feature_info = json.load(f)
-            with open('price_scaler_info.json', 'r') as f:
+            with open('artifacts/price_scaler_info.json', 'r') as f:
                 price_scaler_info = json.load(f)
             
             n_features = len(feature_info['feature_names'])
@@ -233,7 +233,7 @@ class TestMLflowIntegration:
     
     def test_mlruns_directory_exists(self):
         """Vérifier que le répertoire mlruns existe"""
-        mlruns_path = Path('mlruns')
+        mlruns_path = Path('mlflow/mlruns')
         if mlruns_path.exists():
             assert mlruns_path.is_dir()
     
@@ -251,7 +251,7 @@ class TestMLflowIntegration:
             pytest.skip("MLflow n'est pas installé")
         import mlflow
         try:
-            mlflow.set_tracking_uri("file:./mlruns")
+            mlflow.set_tracking_uri("file:./mlflow/mlruns")
             client = mlflow.tracking.MlflowClient()
             
             experiments = client.search_experiments()
@@ -268,10 +268,10 @@ class TestMLflowIntegration:
             pytest.skip("MLflow n'est pas installé")
         import mlflow
         
-        mlflow.set_tracking_uri("file:./mlruns")
+        mlflow.set_tracking_uri("file:./mlflow/mlruns")
         uri = mlflow.get_tracking_uri()
         assert uri is not None
-        assert "mlruns" in uri or uri == "file:./mlruns"
+        assert "mlflow/mlruns" in uri or uri == "file:./mlflow/mlruns"
 
 
 class TestDVCIntegration:
@@ -285,8 +285,8 @@ class TestDVCIntegration:
     
     def test_dvc_yaml_exists(self):
         """Vérifier que dvc.yaml existe"""
-        if Path('dvc.yaml').exists():
-            assert Path('dvc.yaml').exists()
+        if Path('dvc/dvc.yaml').exists():
+            assert Path('dvc/dvc.yaml').exists()
     
     def test_params_yaml_exists(self):
         """Vérifier que params.yaml existe"""
@@ -307,11 +307,11 @@ class TestDVCIntegration:
     
     def test_dvc_yaml_valid_format(self):
         """Vérifier que dvc.yaml a un format valide"""
-        if not Path('dvc.yaml').exists():
-            pytest.skip("dvc.yaml n'existe pas")
+        if not Path('dvc/dvc.yaml').exists():
+            pytest.skip("dvc/dvc.yaml n'existe pas")
         
         import yaml
-        with open('dvc.yaml', 'r') as f:
+        with open('dvc/dvc.yaml', 'r') as f:
             try:
                 dvc_config = yaml.safe_load(f)
                 assert isinstance(dvc_config, dict)
@@ -326,12 +326,12 @@ class TestPerformance:
     
     def test_model_prediction_speed(self):
         """Tester la vitesse de prédiction du modèle"""
-        if not Path('car_model.pkl').exists():
+        if not Path('models/car_model.pkl').exists():
             pytest.skip("Modèle non entraîné")
         
         import time
-        model = joblib.load('car_model.pkl')
-        with open('feature_info.json', 'r') as f:
+        model = joblib.load('models/car_model.pkl')
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
         
         n_features = len(feature_info['feature_names'])
@@ -350,7 +350,7 @@ class TestPerformance:
         import time
         
         start_time = time.time()
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         elapsed_time = time.time() - start_time
         
         # Le chargement devrait prendre moins de 5 secondes

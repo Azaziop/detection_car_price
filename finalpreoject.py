@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import RandomizedSearchCV
 import joblib
 
-df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
 df.head()
 
 df.info()
@@ -30,7 +30,7 @@ df.describe()
 df.shape
 
 profile = ProfileReport(df, title='Profiling Report', explorative=True)
-profile.to_file("profiling_rep.html")
+profile.to_file("reports/profiling_rep.html")
 
 df.isnull().sum()
 
@@ -317,14 +317,14 @@ The model improvement achieved with `RandomizedSearchCV` resulted in a more robu
 *   `RandomizedSearchCV` successfully optimized the hyperparameters of the `RandomForestRegressor`, leading to a demonstrably more accurate model for predicting car prices.
 *   Further analysis could involve exploring the specific hyperparameters that contributed most to the improvement and considering alternative advanced ensemble methods for potential marginal gains.
 """
-joblib.dump(best_model, 'car_model.pkl')
+joblib.dump(best_model, 'models/car_model.pkl')
 
 # Save a new scaler fitted only on the features used for prediction (not Prix and Unnamed: 0)
 # Re-fit the scaler on only the numerical columns that will be in X
 numerical_cols_for_prediction = X.select_dtypes(include=['int64', 'float64']).columns
 scaler_for_prediction = StandardScaler()
 scaler_for_prediction.fit(X[numerical_cols_for_prediction])
-joblib.dump(scaler_for_prediction, 'scaler.pkl')
+joblib.dump(scaler_for_prediction, 'models/scaler.pkl')
 
 # Save feature information for prediction
 import json
@@ -333,5 +333,5 @@ feature_info = {
     'numerical_cols': numerical_cols_for_prediction.tolist(),
     'categorical_cols': X.select_dtypes(include=['object']).columns.tolist()
 }
-with open('feature_info.json', 'w') as f:
+with open('artifacts/feature_info.json', 'w') as f:
     json.dump(feature_info, f, indent=2)

@@ -9,24 +9,24 @@ from sklearn.preprocessing import LabelEncoder
 # Configuration de la page
 st.set_page_config(page_title="Predicteur de Prix Avito", layout="wide")
 
-st.title("🚗 Estimation du prix de voiture (Maroc)")
+st.title("Estimation du prix de voiture (Maroc)")
 st.write("Entrez les caractéristiques du véhicule pour obtenir une estimation du prix.")
 
 
 # 1. Chargement des ressources (Modèle, Scaler et Feature Info)
 @st.cache_resource
 def load_assets():
-    model = joblib.load('car_model.pkl')
-    scaler = joblib.load('scaler.pkl')
-    with open('feature_info.json', 'r') as f:
+    model = joblib.load('models/car_model.pkl')
+    scaler = joblib.load('models/scaler.pkl')
+    with open('artifacts/feature_info.json', 'r') as f:
         feature_info = json.load(f)
     
     # Load price scaling parameters (for inverse transformation)
-    with open('price_scaler_info.json', 'r') as f:
+    with open('artifacts/price_scaler_info.json', 'r') as f:
         price_scaler_info = json.load(f)
     
     # Load training data to build encoders
-    df_full = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+    df_full = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
     
     # Apply same preprocessing
     for col in ['Secteur', 'Origine', 'Première main', 'État']:
@@ -58,7 +58,6 @@ model, scaler, feature_info, encoders, km_ranges, price_scaler_info = load_asset
 
 # Helper function to convert numeric kilometers to range string
 def km_to_range(km_value):
-    """Convert numeric km value to the corresponding range string"""
     for km_range in km_ranges:
         # Parse range like "50 000 - 54 999"
         parts = km_range.split(' - ')
@@ -84,7 +83,7 @@ def km_to_range(km_value):
 
 # 2. Interface utilisateur (Sidebar ou Formulaire)
 with st.sidebar:
-    st.header("📋 Caractéristiques du véhicule")
+    st.header("Caractéristiques du véhicule")
 
     # Use actual values from training data
     villes_uniques = ['Casablanca', 'Fès', 'Marrakech', 'Rabat', 'Tanger', 'Salé', 'Agadir', 'Temara', 'Meknès', 'El Jadida']
@@ -116,7 +115,7 @@ with st.sidebar:
     etats = ["Très bon", "Excellent", "Bon", "Correct", "Pour Pièces", "Endommagé"]
     etat = st.selectbox("État", etats)
     
-    st.subheader("🎁 Équipements")
+    st.subheader("Équipements")
     jantes_alu = st.checkbox("Jantes aluminium")
     climatisation = st.checkbox("Climatisation")
     gps = st.checkbox("Système de navigation/GPS")
@@ -134,7 +133,7 @@ with st.sidebar:
     verrouillage_central = st.checkbox("Verrouillage centralisé à distance")
 
 # 3. Préparation des données pour la prédiction
-if st.button("💰 Estimer le prix", use_container_width=True):
+if st.button("Estimer le prix", use_container_width=True):
     try:
         # Create a DataFrame with the input data - EXACT column order from training
         input_data = pd.DataFrame({
@@ -191,7 +190,7 @@ if st.button("💰 Estimer le prix", use_container_width=True):
                     val_str = str(input_data[col].values[0])
                     if len(val_str) > 30:
                         val_str = val_str[:30] + "..."
-                    warnings.append(f"⚠️ Valeur inconnue: '{val_str}' pour {col}")
+                    warnings.append(f" Valeur inconnue: '{val_str}' pour {col}")
                     input_data[col] = 0
         
         # Scale numerical columns
@@ -215,13 +214,13 @@ if st.button("💰 Estimer le prix", use_container_width=True):
         # Display results
         col1, col2 = st.columns(2)
         with col1:
-            st.success("✅ Prédiction réussie!")
+            st.success("Prédiction réussie!")
         with col2:
             st.metric("Prix estimé", f"{prix_final:,.0f} DH")
         
         # Show warnings if any
         if warnings:
-            with st.expander("⚠️ Avertissements"):
+            with st.expander("Avertissements"):
                 st.write("Les valeurs suivantes n'ont pas été vues pendant l'entraînement:")
                 for w in warnings:
                     st.write(f"• {w}")
@@ -243,15 +242,15 @@ if st.button("💰 Estimer le prix", use_container_width=True):
                 st.write(f"**Portes:** {nb_portes}")
         
     except Exception as e:
-        st.error(f"❌ Erreur lors de la prédiction: {str(e)}")
+        st.error(f"Erreur lors de la prédiction: {str(e)}")
         with st.expander("Détails de l'erreur"):
             st.error(f"Type: {type(e).__name__}")
             import traceback
             st.code(traceback.format_exc())
 
 # 5. Visualisations optionnelles
-if st.checkbox("📈 Montrer les corrélations du projet"):
+if st.checkbox("Montrer les corrélations du projet"):
     try:
         st.image("correlation_heatmap.png")  # Si vous avez sauvegardé l'image
     except:
-        st.warning("⚠️ Image de corrélation non trouvée")
+        st.warning("Image de corrélation non trouvée")

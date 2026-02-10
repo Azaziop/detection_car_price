@@ -50,12 +50,12 @@ Ce projet développe un modèle de régression pour prédire les prix des voitur
          │
          ▼
 ┌─────────────────────────────┐
-│  Models & Artifacts:        │
-│  - car_model.pkl            │
-│  - scaler.pkl               │
-│  - encoders.pkl             │
-│  - feature_info.json        │
-│  - price_scaler_info.json   │
+│  Models & Artifacts:                │
+│  - models/car_model.pkl             │
+│  - models/scaler.pkl                │
+│  - models/encoders.pkl              │
+│  - artifacts/feature_info.json      │
+│  - artifacts/price_scaler_info.json │
 └────────┬────────────────────┘
          │
          ▼
@@ -93,13 +93,13 @@ source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
 ### 3. Installer les dépendances
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements/requirements.txt
 ```
 
 ### 4. (Optionnel) Installation pour développement
 
 ```bash
-pip install -r requirements-dev.txt
+pip install -r requirements/requirements-dev.txt
 ```
 
 ## 💻 Utilisation
@@ -127,13 +127,13 @@ import json
 from sklearn.preprocessing import LabelEncoder
 
 # Charger les artifacts
-model = joblib.load('car_model.pkl')
-scaler = joblib.load('scaler.pkl')
+model = joblib.load('models/car_model.pkl')
+scaler = joblib.load('models/scaler.pkl')
 
-with open('feature_info.json', 'r') as f:
+with open('artifacts/feature_info.json', 'r') as f:
     feature_info = json.load(f)
 
-with open('price_scaler_info.json', 'r') as f:
+with open('artifacts/price_scaler_info.json', 'r') as f:
     price_scaler_info = json.load(f)
 
 # Créer les encodeurs et préparer les données
@@ -147,12 +147,12 @@ prediction = model.predict(X_scaled)
 
 #### Avec DVC:
 ```bash
-dvc repro
+dvc repro -f dvc/dvc.yaml
 ```
 
 #### Ou directement:
 ```bash
-python train_with_mlflow.py
+python scripts/train_with_mlflow.py
 ```
 
 ### Option 4: Lancer les tests
@@ -224,19 +224,18 @@ Le modèle Random Forest entraîné achieves:
 ```
 detection_car_price/
 ├── README.md                      # Ce fichier
-├── requirements.txt               # Dépendances pip
-├── requirements-dev.txt           # Dépendances développement
+├── requirements/requirements.txt               # Dépendances pip
+├── requirements/requirements-dev.txt           # Dépendances développement
 ├── params.yaml                    # Hyperparamètres du modèle
-├── dvc.yaml                       # Pipeline DVC
+├── dvc/dvc.yaml                               # Pipeline DVC
 ├── pytest.ini                     # Configuration pytest
 │
-├── avito_car_dataset_ALL.csv      # Dataset source
+├── data/raw/avito_car_dataset_ALL.csv      # Dataset source
 ├── main.py                        # App Streamlit basique
 ├── main_mlflow.py                 # App Streamlit avec MLflow
-├── train_with_mlflow.py           # Pipeline d'entraînement
+├── scripts/train_with_mlflow.py   # Pipeline d'entraînement
 ├── finalpreoject.py               # Analyse EDA
-├── demo.py                        # Démo simple
-├── load_model_mlflow.py           # Chargement des modèles
+├── scripts/load_model_mlflow.py   # Chargement des modèles
 │
 ├── tests/                         # Suite de tests
 │   ├── __init__.py
@@ -244,12 +243,12 @@ detection_car_price/
 │   ├── test_integration.py
 │   └── test_car_pipeline.py
 │
-├── mlruns/                        # Artifacts MLflow
+├── mlflow/mlruns/                 # Artifacts MLflow
 │   ├── 1/                         # Experiment 1
 │   ├── 710723541858247182/        # Experiment 2
 │   └── models/                    # Registered Models
 │
-├── htmlcov/                       # Coverage reports
+├── reports/htmlcov/               # Coverage reports
 └── __pycache__/                   # Cache Python
 ```
 
@@ -311,12 +310,12 @@ pytest tests/test_integration.py -v
 ## 📚 Documentation supplémentaire
 
 - Voir [CODE_EXAMPLES.md](CODE_EXAMPLES.md) pour des exemples d'utilisation détaillés
-- Rapport de profiling: [profiling_rep.html](profiling_rep.html)
-- Coverage report: [htmlcov/index.html](htmlcov/index.html)
+- Rapport de profiling: [reports/profiling_rep.html](reports/profiling_rep.html)
+- Coverage report: [reports/htmlcov/index.html](reports/htmlcov/index.html)
 
 ## 🔍 Analyse EDA
 
-Un rapport complet de l'analyse exploratoire est généré dans `profiling_rep.html`:
+Un rapport complet de l'analyse exploratoire est généré dans `reports/profiling_rep.html`:
 
 ```bash
 # Régénérer le rapport (optionnel)
@@ -336,19 +335,19 @@ Contient:
 
 ```bash
 # Vérifier les dépendances
-pip install -r requirements.txt
+pip install -r requirements/requirements.txt
 
 # Réinstaller en cas de problème
-pip install --force-reinstall -r requirements.txt
+pip install --force-reinstall -r requirements/requirements.txt
 ```
 
 ### Modèle non trouvé
 
 Assurez-vous d'avoir entraîné le modèle:
 ```bash
-python train_with_mlflow.py
+python scripts/train_with_mlflow.py
 # ou
-dvc repro
+dvc repro -f dvc/dvc.yaml
 ```
 
 ### Erreurs d'encodage CSV

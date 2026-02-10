@@ -10,16 +10,14 @@ from mlflow.tracking import MlflowClient
 from sklearn.preprocessing import LabelEncoder
 
 # Configuration de la page
-st.set_page_config(page_title="Predicteur de Prix Avito (MLflow)", layout="wide", page_icon="🚗")
+st.set_page_config(page_title="Predicteur de Prix Avito (MLflow)", layout="wide")
 
 st.title(" Estimation du prix de voiture (Maroc)")
-st.markdown("### ✨ Powered by **MLflow** + **DVC** + **Scikit-learn**")
-
 # Sidebar pour configuration MLflow
 with st.sidebar:
-    st.header("🔧 Configuration MLOps")
+    st.header(" Configuration MLOps")
     
-    use_mlflow = st.checkbox("📦 Utiliser MLflow Model Registry", value=False, 
+    use_mlflow = st.checkbox(" Utiliser MLflow Model Registry", value=False, 
                              help="Charger le modèle depuis MLflow au lieu des fichiers locaux")
     
     if use_mlflow:
@@ -30,7 +28,7 @@ with st.sidebar:
             help="None = dernière version, Staging = test, Production = déployé"
         )
         
-        if st.button("🔄 Recharger le modèle"):
+        if st.button(" Recharger le modèle"):
             st.cache_resource.clear()
             st.success("Cache cleared! Le modèle sera rechargé.")
     
@@ -43,8 +41,8 @@ def load_assets(use_mlflow_registry=False, stage="None"):
     
     if use_mlflow_registry:
         # Load from MLflow
-        with st.spinner("📦 Chargement depuis MLflow Model Registry..."):
-            mlflow.set_tracking_uri("file:./mlruns")
+        with st.spinner(" Chargement depuis MLflow Model Registry..."):
+            mlflow.set_tracking_uri("file:./mlflow/mlruns")
             
             model_name = "CarPricePredictor"
             stage_param = None if stage == "None" else stage
@@ -53,8 +51,8 @@ def load_assets(use_mlflow_registry=False, stage="None"):
                 client = MlflowClient()
                 versions = client.search_model_versions(f"name='{model_name}'")
                 if not versions:
-                    st.error("❌ Aucun modèle trouvé dans MLflow!")
-                    st.info("💡 Entraînez d'abord un modèle avec: python train_with_mlflow.py")
+                    st.error(" Aucun modèle trouvé dans MLflow!")
+                    st.info("💡 Entraînez d'abord un modèle avec: python scripts/train_with_mlflow.py")
                     st.stop()
                 
                 model_uri = None
@@ -76,31 +74,31 @@ def load_assets(use_mlflow_registry=False, stage="None"):
                     model_uri = f"models:/{model_name}/{latest_version}"
                 
                 model = mlflow.sklearn.load_model(model_uri)
-                st.success(f"✅ Modèle chargé depuis: {model_uri}")
+                st.success(f" Modèle chargé depuis: {model_uri}")
             except Exception as e:
-                st.error(f"❌ Erreur lors du chargement MLflow: {str(e)}")
+                st.error(f" Erreur lors du chargement MLflow: {str(e)}")
                 st.info("💡 Utilisez les fichiers locaux à la place.")
                 st.stop()
     else:
         # Load from local files
         try:
-            model = joblib.load('car_model.pkl')
+            model = joblib.load('models/car_model.pkl')
         except FileNotFoundError:
-            st.error("❌ Fichier car_model.pkl introuvable!")
-            st.info("💡 Entraînez d'abord le modèle avec: python train_with_mlflow.py")
+            st.error(" Fichier models/car_model.pkl introuvable!")
+            st.info("💡 Entraînez d'abord le modèle avec: python scripts/train_with_mlflow.py")
             st.stop()
     
     # Load other artifacts
-    scaler = joblib.load('scaler.pkl')
+    scaler = joblib.load('models/scaler.pkl')
     
-    with open('feature_info.json', 'r') as f:
+    with open('artifacts/feature_info.json', 'r') as f:
         feature_info = json.load(f)
     
-    with open('price_scaler_info.json', 'r') as f:
+    with open('artifacts/price_scaler_info.json', 'r') as f:
         price_scaler_info = json.load(f)
     
     # Load training data for encoders
-    df_full = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+    df_full = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
     
     for col in ['Origine', 'Première main', 'État']:
         if df_full[col].isnull().any():
@@ -156,7 +154,7 @@ def km_to_range(km_value):
 
 # 2. Interface utilisateur
 with st.sidebar:
-    st.header("📋 Caractéristiques du véhicule")
+    st.header(" Caractéristiques du véhicule")
     
     villes_uniques = ['Casablanca', 'Fès', 'Marrakech', 'Rabat', 'Tanger', 'Salé', 'Agadir', 'Temara', 'Meknès', 'El Jadida']
     ville = st.selectbox("Ville", villes_uniques)
@@ -255,7 +253,7 @@ if st.button("💰 Estimer le prix", use_container_width=True):
                     val_str = str(input_data[col].values[0])
                     if len(val_str) > 30:
                         val_str = val_str[:30] + "..."
-                    warnings.append(f"⚠️ Valeur inconnue: '{val_str}' pour {col}")
+                    warnings.append(f" Valeur inconnue: '{val_str}' pour {col}")
                     input_data[col] = 0
         
         numerical_cols = feature_info['numerical_cols']
@@ -269,12 +267,12 @@ if st.button("💰 Estimer le prix", use_container_width=True):
         
         col1, col2 = st.columns(2)
         with col1:
-            st.success("✅ Prédiction réussie!")
+            st.success("Prédiction réussie!")
         with col2:
             st.metric("Prix estimé", f"{prix_final:,.0f} DH")
         
         if warnings:
-            with st.expander("⚠️ Avertissements"):
+            with st.expander("Avertissements"):
                 st.write("Les valeurs suivantes n'ont pas été vues pendant l'entraînement:")
                 for w in warnings:
                     st.write(f"• {w}")
@@ -295,7 +293,7 @@ if st.button("💰 Estimer le prix", use_container_width=True):
                 st.write(f"**Portes:** {nb_portes}")
         
     except Exception as e:
-        st.error(f"❌ Erreur lors de la prédiction: {str(e)}")
+        st.error(f"Erreur lors de la prédiction: {str(e)}")
         with st.expander("Détails de l'erreur"):
             st.error(f"Type: {type(e).__name__}")
             import traceback
@@ -305,8 +303,8 @@ if st.button("💰 Estimer le prix", use_container_width=True):
 st.divider()
 col1, col2, col3 = st.columns(3)
 with col1:
-    st.caption("🔬 Framework: Scikit-learn")
+    st.caption(" Framework: Scikit-learn")
 with col2:
-    st.caption("📊 Tracking: MLflow")
+    st.caption("Tracking: MLflow")
 with col3:
-    st.caption("📦 Version Control: DVC")
+    st.caption("Version Control: DVC")

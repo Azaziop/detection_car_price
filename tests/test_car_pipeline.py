@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from train_with_mlflow import CarPricePipeline
+from scripts.train_with_mlflow import CarPricePipeline
 
 
 class TestCarPricePipeline:
@@ -55,7 +55,7 @@ class TestCarPricePipeline:
     
     def test_pipeline_load_data(self):
         """Tester le chargement des données"""
-        if not Path('avito_car_dataset_ALL.csv').exists():
+        if not Path('data/raw/avito_car_dataset_ALL.csv').exists():
             pytest.skip("Fichier de données non disponible")
         
         pipeline = CarPricePipeline()
@@ -70,13 +70,13 @@ class TestCarPricePipeline:
     
     def test_pipeline_preprocess_data(self):
         """Tester le prétraitement des données"""
-        if not Path('avito_car_dataset_ALL.csv').exists():
+        if not Path('data/raw/avito_car_dataset_ALL.csv').exists():
             pytest.skip("Fichier de données non disponible")
         
         pipeline = CarPricePipeline()
         
         with patch('mlflow.log_param'):
-            df_raw = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+            df_raw = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
             df_processed = pipeline.preprocess_data(df_raw.copy())
         
         # Vérifier que le prétraitement a fonctionné
@@ -197,11 +197,11 @@ class TestPipelineDataQuality:
     
     def test_no_duplicate_features(self):
         """Vérifier qu'il n'y a pas de features dupliquées"""
-        if not Path('feature_info.json').exists():
-            pytest.skip("feature_info.json non disponible")
+        if not Path('artifacts/feature_info.json').exists():
+            pytest.skip("artifacts/feature_info.json non disponible")
         
         import json
-        with open('feature_info.json', 'r') as f:
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
         
         feature_names = feature_info['feature_names']
@@ -210,11 +210,11 @@ class TestPipelineDataQuality:
     
     def test_categorical_numerical_separation(self):
         """Vérifier que les colonnes catégorielles et numériques sont bien séparées"""
-        if not Path('feature_info.json').exists():
-            pytest.skip("feature_info.json non disponible")
+        if not Path('artifacts/feature_info.json').exists():
+            pytest.skip("artifacts/feature_info.json non disponible")
         
         import json
-        with open('feature_info.json', 'r') as f:
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
         
         categorical = set(feature_info['categorical_cols'])
@@ -226,11 +226,11 @@ class TestPipelineDataQuality:
     
     def test_feature_consistency(self):
         """Vérifier la cohérence entre feature_names et les listes cat/num"""
-        if not Path('feature_info.json').exists():
-            pytest.skip("feature_info.json non disponible")
+        if not Path('artifacts/feature_info.json').exists():
+            pytest.skip("artifacts/feature_info.json non disponible")
         
         import json
-        with open('feature_info.json', 'r') as f:
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
         
         all_features = set(feature_info['feature_names'])
@@ -250,11 +250,11 @@ class TestModelValidation:
     
     def test_model_serialization(self):
         """Tester que le modèle peut être sérialisé et désérialisé"""
-        if not Path('car_model.pkl').exists():
+        if not Path('models/car_model.pkl').exists():
             pytest.skip("Modèle non entraîné")
         
         import joblib
-        model = joblib.load('car_model.pkl')
+        model = joblib.load('models/car_model.pkl')
         
         # Sérialiser dans un fichier temporaire
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pkl') as f:
@@ -272,11 +272,11 @@ class TestModelValidation:
     
     def test_scaler_transformation_reversible(self):
         """Vérifier que la transformation du scaler est réversible"""
-        if not Path('scaler.pkl').exists():
+        if not Path('models/scaler.pkl').exists():
             pytest.skip("Scaler non disponible")
         
         import joblib
-        scaler = joblib.load('scaler.pkl')
+        scaler = joblib.load('models/scaler.pkl')
         
         # Créer des données de test
         test_data = np.random.randn(10, scaler.n_features_in_)

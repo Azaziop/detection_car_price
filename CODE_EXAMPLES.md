@@ -27,13 +27,13 @@ import json
 from sklearn.preprocessing import LabelEncoder
 
 # Charger les artifacts
-model = joblib.load('car_model.pkl')
-scaler = joblib.load('scaler.pkl')
+model = joblib.load('models/car_model.pkl')
+scaler = joblib.load('models/scaler.pkl')
 
-with open('feature_info.json', 'r') as f:
+with open('artifacts/feature_info.json', 'r') as f:
     feature_info = json.load(f)
 
-with open('price_scaler_info.json', 'r') as f:
+with open('artifacts/price_scaler_info.json', 'r') as f:
     price_scaler_info = json.load(f)
 
 # Créer une voiture d'exemple
@@ -66,7 +66,7 @@ from train_with_mlflow import CarPricePipeline
 pipeline = CarPricePipeline()
 
 # Charger les données
-df = pipeline.load_data('avito_car_dataset_ALL.csv')
+df = pipeline.load_data('data/raw/avito_car_dataset_ALL.csv')
 
 # Prétraiter
 df = pipeline.preprocess_data(df)
@@ -108,7 +108,7 @@ mlflow ui
 
 ```bash
 # Terminal 1: Entraîner le modèle
-python train_with_mlflow.py
+python scripts/train_with_mlflow.py
 
 # Terminal 2: Voir les expériences
 mlflow ui
@@ -130,12 +130,10 @@ streamlit run main_mlflow.py
 import mlflow.sklearn
 
 # Set tracking URI
-mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_tracking_uri("file:./mlflow/mlruns")
 
 # Charger un modèle spécifique
-model = mlflow.sklearn.load_model(
-    model_uri="runs:/RUN_ID/model"
-)
+model = mlflow.sklearn.load_model("models:/CarPricePredictor/1")
 
 # Faire une prédiction
 predictions = model.predict(X_test)
@@ -154,13 +152,13 @@ from sklearn.preprocessing import LabelEncoder
 
 def load_artifacts():
     """Charger tous les artifacts"""
-    model = joblib.load('car_model.pkl')
-    scaler = joblib.load('scaler.pkl')
+    model = joblib.load('models/car_model.pkl')
+    scaler = joblib.load('models/scaler.pkl')
     
-    with open('feature_info.json', 'r') as f:
+    with open('artifacts/feature_info.json', 'r') as f:
         feature_info = json.load(f)
     
-    with open('price_scaler_info.json', 'r') as f:
+    with open('artifacts/price_scaler_info.json', 'r') as f:
         price_scaler_info = json.load(f)
     
     return model, scaler, feature_info, price_scaler_info
@@ -221,7 +219,6 @@ for idx, row in cars_df.iterrows():
 
 # Sauvegarder les résultats
 results_df = pd.DataFrame(results)
-results_df.to_csv('predictions.csv', index=False)
 print(results_df)
 ```
 
@@ -232,7 +229,7 @@ print(results_df)
 ```python
 from flask import Flask, request, jsonify
 from predict_custom import predict_price
-
+model = joblib.load('models/car_model.pkl')
 app = Flask(__name__)
 
 @app.route('/predict', methods=['POST'])
@@ -279,7 +276,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 
 # Charger le modèle et les données
-model = joblib.load('car_model.pkl')
+model = joblib.load('models/car_model.pkl')
 test_data = pd.read_csv('test_data.csv')
 
 X_test = test_data.drop('Prix', axis=1)
@@ -367,7 +364,7 @@ python -m pytest tests/ -vv -x
 
 - [HOW_TO_RUN.md](HOW_TO_RUN.md) - Guide complet
 - [main_mlflow.py](main_mlflow.py) - Code Streamlit complet
-- [train_with_mlflow.py](train_with_mlflow.py) - Code d'entraînement
+- [scripts/train_with_mlflow.py](scripts/train_with_mlflow.py) - Code d'entraînement
 - [README_MLops.md](README_MLops.md) - Setup MLOps
 
 ---

@@ -17,7 +17,7 @@ def load_best_model(model_name="CarPricePredictor", stage=None):
         Loaded model
     """
     # Set MLflow tracking URI
-    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_tracking_uri("file:./mlflow/mlruns")
     
     if stage:
         model_uri = f"models:/{model_name}/{stage}"
@@ -42,7 +42,7 @@ def load_best_model(model_name="CarPricePredictor", stage=None):
 def get_model_info(model_name="CarPricePredictor"):
     """Get information about all model versions"""
     client = MlflowClient()
-    mlflow.set_tracking_uri("file:./mlruns")
+    mlflow.set_tracking_uri("file:./mlflow/mlruns")
     
     versions = client.search_model_versions(f"name='{model_name}'")
     
@@ -84,4 +84,4 @@ if __name__ == "__main__":
             print(f"Model params: {model.get_params()}")
         except Exception as e:
             print(f"❌ Error: {e}")
-            print("\n💡 Assurez-vous d'avoir entraîné un modèle avec train_with_mlflow.py")
+            print("\n💡 Assurez-vous d'avoir entraîné un modèle avec scripts/train_with_mlflow.py")

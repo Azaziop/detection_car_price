@@ -16,7 +16,7 @@ from unittest.mock import Mock, patch, MagicMock
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from train_with_mlflow import CarPricePipeline
+from scripts.train_with_mlflow import CarPricePipeline
 
 
 class TestDataLoading:
@@ -24,38 +24,38 @@ class TestDataLoading:
     
     def test_data_file_exists(self):
         """Vérifier que le fichier de données existe"""
-        assert Path('avito_car_dataset_ALL.csv').exists()
+        assert Path('data/raw/avito_car_dataset_ALL.csv').exists()
     
     def test_data_loads_correctly(self):
         """Vérifier que les données se chargent sans erreur"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         assert df is not None
         assert len(df) > 0
         assert 'Prix' in df.columns
     
     def test_data_columns(self):
         """Vérifier que les colonnes essentielles sont présentes"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         required_cols = ['Prix', 'Ville', 'Marque', 'Modèle', 'Année-Modèle', 'Kilométrage']
         for col in required_cols:
             assert col in df.columns, f"Colonne manquante: {col}"
     
     def test_data_types(self):
         """Vérifier les types de données"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         assert df['Prix'].dtype in [np.int64, np.float64], "Prix doit être numérique"
         assert df['Année-Modèle'].dtype in [np.int64, np.float64], "Année-Modèle doit être numérique"
     
     def test_data_no_duplicate_rows(self):
         """Vérifier qu'il n'y a pas trop de doublons"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         duplicates = df.duplicated().sum()
         # Accepter jusqu'à 5% de doublons
         assert duplicates / len(df) < 0.05, f"Trop de doublons: {duplicates}"
     
     def test_data_price_range(self):
         """Vérifier que les prix sont dans une plage raisonnable"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         assert df['Prix'].min() >= 0, "Prix négatifs détectés"
         # Note: Il y a quelques outliers extrêmes dans les données brutes (> 600M)
         # C'est pourquoi le pipeline les supprime avec la méthode IQR
@@ -122,7 +122,7 @@ class TestPreprocessing:
     
     def test_outlier_detection(self):
         """Tester la détection des outliers"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         Q1 = df['Prix'].quantile(0.25)
         Q3 = df['Prix'].quantile(0.75)
         IQR = Q3 - Q1
@@ -140,21 +140,21 @@ class TestModelArtifacts:
     
     def test_model_file_exists(self):
         """Vérifier que le modèle existe"""
-        model_path = Path('car_model.pkl')
+        model_path = Path('models/car_model.pkl')
         if model_path.exists():
             assert model_path.exists()
             assert model_path.stat().st_size > 0
     
     def test_scaler_file_exists(self):
         """Vérifier que le scaler existe"""
-        scaler_path = Path('scaler.pkl')
+        scaler_path = Path('models/scaler.pkl')
         if scaler_path.exists():
             assert scaler_path.exists()
             assert scaler_path.stat().st_size > 0
     
     def test_feature_info_exists(self):
         """Vérifier que feature_info.json existe"""
-        feature_info_path = Path('feature_info.json')
+        feature_info_path = Path('artifacts/feature_info.json')
         if feature_info_path.exists():
             assert feature_info_path.exists()
             with open(feature_info_path, 'r') as f:
@@ -165,7 +165,7 @@ class TestModelArtifacts:
     
     def test_price_scaler_info_exists(self):
         """Vérifier que price_scaler_info.json existe"""
-        price_scaler_path = Path('price_scaler_info.json')
+        price_scaler_path = Path('artifacts/price_scaler_info.json')
         if price_scaler_path.exists():
             assert price_scaler_path.exists()
             with open(price_scaler_path, 'r') as f:
@@ -182,14 +182,14 @@ class TestModelPredictions:
     @pytest.fixture
     def load_model_artifacts(self):
         """Charger les artifacts du modèle"""
-        if not Path('car_model.pkl').exists():
+        if not Path('models/car_model.pkl').exists():
             pytest.skip("Modèle non entraîné")
         
-        model = joblib.load('car_model.pkl')
-        scaler = joblib.load('scaler.pkl')
-        with open('feature_info.json', 'r') as f:
+        model = joblib.load('models/car_model.pkl')
+        scaler = joblib.load('models/scaler.pkl')
+        with open('artifacts/feature_info.json', 'r') as f:
             feature_info = json.load(f)
-        with open('price_scaler_info.json', 'r') as f:
+        with open('artifacts/price_scaler_info.json', 'r') as f:
             price_scaler_info = json.load(f)
         
         return model, scaler, feature_info, price_scaler_info
@@ -283,7 +283,7 @@ class TestKilometrageMapping:
     @pytest.fixture
     def km_ranges(self):
         """Charger les ranges de kilométrage"""
-        df = pd.read_csv('avito_car_dataset_ALL.csv', encoding='latin1')
+        df = pd.read_csv('data/raw/avito_car_dataset_ALL.csv', encoding='latin1')
         return sorted(df['Kilométrage'].unique())
     
     def test_km_ranges_exist(self, km_ranges):
@@ -326,20 +326,20 @@ class TestEndToEndPipeline:
         """Tester que tous les fichiers nécessaires existent pour le pipeline"""
         # Vérifier que tous les composants essentiels sont présents
         required_files = [
-            'avito_car_dataset_ALL.csv',
-            'train_with_mlflow.py',
+            'data/raw/avito_car_dataset_ALL.csv',
+            'scripts/train_with_mlflow.py',
             'params.yaml',
-            'dvc.yaml',
+            'dvc/dvc.yaml',
         ]
         
         for file in required_files:
             assert Path(file).exists(), f"Fichier requis manquant: {file}"
         
         # Si les artifacts existent, les vérifier aussi
-        if Path('car_model.pkl').exists():
-            assert Path('scaler.pkl').exists()
-            assert Path('feature_info.json').exists()
-            assert Path('price_scaler_info.json').exists()
+        if Path('models/car_model.pkl').exists():
+            assert Path('models/scaler.pkl').exists()
+            assert Path('artifacts/feature_info.json').exists()
+            assert Path('artifacts/price_scaler_info.json').exists()
 
 
 # Configuration pytest
