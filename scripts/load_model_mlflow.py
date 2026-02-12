@@ -4,6 +4,7 @@ Load the best model from MLflow Model Registry
 import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
+import os
 
 def load_best_model(model_name="CarPricePredictor", stage=None):
     """
@@ -16,8 +17,9 @@ def load_best_model(model_name="CarPricePredictor", stage=None):
     Returns:
         Loaded model
     """
-    # Set MLflow tracking URI
-    mlflow.set_tracking_uri("file:./mlflow/mlruns")
+    # Set MLflow tracking URI with absolute path
+    mlflow_path = os.path.join(os.path.dirname(__file__), '..', 'mlflow', 'mlruns')
+    mlflow.set_tracking_uri(f"file:{os.path.abspath(mlflow_path)}")
     
     if stage:
         model_uri = f"models:/{model_name}/{stage}"
@@ -41,7 +43,8 @@ def load_best_model(model_name="CarPricePredictor", stage=None):
 
 def get_model_info(model_name="CarPricePredictor"):
     """Get information about all model versions"""
-    client = MlflowClient()
+    client_path = os.path.join(os.path.dirname(__file__), '..', 'mlflow', 'mlruns')
+    mlflow.set_tracking_uri(f"file:{os.path.abspath(mlflow_path)}
     mlflow.set_tracking_uri("file:./mlflow/mlruns")
     
     versions = client.search_model_versions(f"name='{model_name}'")

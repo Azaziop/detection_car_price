@@ -18,7 +18,8 @@ import seaborn as sns
 from datetime import datetime
 
 # Configuration MLflow
-mlflow.set_tracking_uri("file:./mlflow/mlruns")
+mlflow_path = os.path.join(os.path.dirname(__file__), '..', 'mlflow', 'mlruns')
+mlflow.set_tracking_uri(f"file:{os.path.abspath(mlflow_path)}")
 EXPERIMENT_NAME = "car_price_prediction"
 mlflow.set_experiment(EXPERIMENT_NAME)
 

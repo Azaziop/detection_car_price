@@ -8,6 +8,7 @@ import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 from sklearn.preprocessing import LabelEncoder
+import os
 
 # Configuration de la page
 st.set_page_config(page_title="Predicteur de Prix Avito (MLflow)", layout="wide")
@@ -42,7 +43,9 @@ def load_assets(use_mlflow_registry=False, stage="None"):
     if use_mlflow_registry:
         # Load from MLflow
         with st.spinner(" Chargement depuis MLflow Model Registry..."):
-            mlflow.set_tracking_uri("file:./mlflow/mlruns")
+            # Use absolute path to mlflow directory
+            mlflow_path = os.path.join(os.path.dirname(__file__), 'mlflow', 'mlruns')
+            mlflow.set_tracking_uri(f"file:{mlflow_path}")
             
             model_name = "CarPricePredictor"
             stage_param = None if stage == "None" else stage
