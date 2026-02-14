@@ -9,3 +9,8 @@ mlflow==3.9.0
 skops==0.11.0
 dvc==3.40.0
 pyyaml==6.0.1
+psycopg2-binary==2.9.9
+
+# Apache Airflow pour l'orchestration
+apache-airflow==2.8.1
+apache-airflow-providers-common-sql==1.10.0

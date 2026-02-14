@@ -1,0 +1,61 @@
+[2026-02-14T17:59:11.531+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-14T17:59:11.540+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:59:01+00:00 [queued]>
+[2026-02-14T17:59:11.542+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:59:01+00:00 [queued]>
+[2026-02-14T17:59:11.542+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-02-14T17:59:11.546+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): validate_staging_model> on 2026-02-14 17:59:01+00:00
+[2026-02-14T17:59:11.549+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62: DeprecationWarning: This process (pid=1940) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2026-02-14T17:59:11.549+0000] {standard_task_runner.py:64} INFO - Started process 1941 to run task
+[2026-02-14T17:59:11.549+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'car_price_predictor_pipeline', 'validate_staging_model', 'manual__2026-02-14T17:59:01+00:00', '--job-id', '141', '--raw', '--subdir', 'DAGS_FOLDER/car_price_ml_pipeline.py', '--cfg-path', '/tmp/tmp79lfmz0n']
+[2026-02-14T17:59:11.550+0000] {standard_task_runner.py:91} INFO - Job 141: Subtask validate_staging_model
+[2026-02-14T17:59:11.564+0000] {task_command.py:426} INFO - Running <TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:59:01+00:00 [running]> on host 2075ebc01f0b
+[2026-02-14T17:59:11.592+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='alerts@example.com' AIRFLOW_CTX_DAG_OWNER='data-science-team' AIRFLOW_CTX_DAG_ID='car_price_predictor_pipeline' AIRFLOW_CTX_TASK_ID='validate_staging_model' AIRFLOW_CTX_EXECUTION_DATE='2026-02-14T17:59:01+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-14T17:59:01+00:00'
+[2026-02-14T17:59:11.592+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-14T17:59:11.917+0000] {logging_mixin.py:188} INFO - 🧪 Validation du modèle en Staging...
+[2026-02-14T17:59:11.923+0000] {logging_mixin.py:188} INFO - 📦 Validation de la version None
+[2026-02-14T17:59:11.941+0000] {logging_mixin.py:188} INFO - ❌ Erreur lors de la validation: INVALID_PARAMETER_VALUE: Parameter 'version' must be an integer, got 'None'.
+[2026-02-14T17:59:11.941+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-14T17:59:11.941+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/dags/car_price_ml_pipeline.py", line 268, in validate_staging_model
+    model_info = client.get_model_version(model_name, model_version)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/tracking/client.py", line 3108, in get_model_version
+    return self._get_registry_client().get_model_version(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/tracking/_model_registry/client.py", line 259, in get_model_version
+    return self.store.get_model_version(name, version)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/model_registry/rest_store.py", line 295, in get_model_version
+    response_proto = self._call_endpoint(GetModelVersion, req_body)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/model_registry/base_rest_store.py", line 42, in _call_endpoint
+    return call_endpoint(
+           ^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/utils/rest_utils.py", line 219, in call_endpoint
+    response = verify_rest_response(response, endpoint)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/utils/rest_utils.py", line 151, in verify_rest_response
+    raise RestException(json.loads(response.text))
+mlflow.exceptions.RestException: INVALID_PARAMETER_VALUE: Parameter 'version' must be an integer, got 'None'.
+[2026-02-14T17:59:11.945+0000] {taskinstance.py:1206} INFO - Marking task as UP_FOR_RETRY. dag_id=car_price_predictor_pipeline, task_id=validate_staging_model, run_id=manual__2026-02-14T17:59:01+00:00, execution_date=20260214T175901, start_date=20260214T175911, end_date=20260214T175911
+[2026-02-14T17:59:11.949+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 141 for task validate_staging_model (INVALID_PARAMETER_VALUE: Parameter 'version' must be an integer, got 'None'.; 1941)
+[2026-02-14T17:59:11.977+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2026-02-14T17:59:11.986+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-02-14T17:59:11.986+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

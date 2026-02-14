@@ -1,0 +1,25 @@
+FROM apache/airflow:2.9.3
+
+USER root
+
+# Installer les dépendances système pour matplotlib
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    gcc \
+    g++ \
+    pkg-config \
+    libfreetype6-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+
+# Copier les requirements
+COPY requirements-airflow.txt /requirements-airflow.txt
+
+# Installer les dépendances Python nécessaires pour le DAG
+RUN pip install --no-cache-dir -r /requirements-airflow.txt
+
+# Copier le code du projet
+COPY --chown=airflow:root . /opt/airflow/project/

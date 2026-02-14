@@ -1,0 +1,23 @@
+[2026-02-14T18:08:43.251+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-14T18:08:43.259+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.send_pipeline_report manual__2026-02-14T17:43:22+00:00 [queued]>
+[2026-02-14T18:08:43.261+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.send_pipeline_report manual__2026-02-14T17:43:22+00:00 [queued]>
+[2026-02-14T18:08:43.261+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-02-14T18:08:43.265+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): send_pipeline_report> on 2026-02-14 17:43:22+00:00
+[2026-02-14T18:08:43.267+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62: DeprecationWarning: This process (pid=2326) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2026-02-14T18:08:43.268+0000] {standard_task_runner.py:64} INFO - Started process 2327 to run task
+[2026-02-14T18:08:43.268+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'car_price_predictor_pipeline', 'send_pipeline_report', 'manual__2026-02-14T17:43:22+00:00', '--job-id', '206', '--raw', '--subdir', 'DAGS_FOLDER/car_price_ml_pipeline.py', '--cfg-path', '/tmp/tmpc5f95_ef']
+[2026-02-14T18:08:43.269+0000] {standard_task_runner.py:91} INFO - Job 206: Subtask send_pipeline_report
+[2026-02-14T18:08:43.283+0000] {task_command.py:426} INFO - Running <TaskInstance: car_price_predictor_pipeline.send_pipeline_report manual__2026-02-14T17:43:22+00:00 [running]> on host 2075ebc01f0b
+[2026-02-14T18:08:43.306+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='alerts@example.com' AIRFLOW_CTX_DAG_OWNER='data-science-team' AIRFLOW_CTX_DAG_ID='car_price_predictor_pipeline' AIRFLOW_CTX_TASK_ID='send_pipeline_report' AIRFLOW_CTX_EXECUTION_DATE='2026-02-14T17:43:22+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-14T17:43:22+00:00'
+[2026-02-14T18:08:43.306+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-14T18:08:43.311+0000] {logging_mixin.py:188} INFO - 📧 Génération du rapport de pipeline...
+[2026-02-14T18:08:43.321+0000] {logging_mixin.py:188} INFO - ✅ Rapport sauvegardé: /opt/***/project/reports/pipeline_report_20260214_180843.json
+[2026-02-14T18:08:43.322+0000] {logging_mixin.py:188} INFO - 📊 Status: SUCCESS
+[2026-02-14T18:08:43.322+0000] {python.py:237} INFO - Done. Returned value was: {'pipeline_date': '2026-02-14T18:08:43.321290', 'data_quality': {'total_rows': 24776, 'missing_percentage': 4.606272198902164, 'columns': ['Unnamed: 0', 'Lien', 'Ville', 'Secteur', 'Marque', 'Modèle', 'Année-Modèle', 'Kilométrage', 'Type de carburant', 'Puissance fiscale', 'Boite de vitesses', 'Nombre de portes', 'Origine', 'Première main', 'État', 'Jantes aluminium', 'Airbags', 'Climatisation', 'Système de navigation/GPS', 'Toit ouvrant', 'Sièges cuir', 'Radar de recul', 'Caméra de recul', 'Vitres électriques', 'ABS', 'ESP', 'Régulateur de vitesse', 'Limiteur de vitesse', 'CD/MP3/Bluetooth', 'Ordinateur de bord', 'Verrouillage centralisé à distance', 'Prix'], 'data_ok': True}, 'training': {'run_id': 'f0c1c26b6e81407e962d55087a3fd702', 'metrics': None}, 'evaluation': {'run_id': 'f0c1c26b6e81407e962d55087a3fd702', 'r2_score': 0.0, 'rmse': 0.5187586175091933, 'mae': 0.387170867862612, 'is_promotable': False, 'evaluation_date': '2026-02-14T17:58:37.321208'}, 'status': 'SUCCESS'}
+[2026-02-14T18:08:43.322+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-14T18:08:43.328+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=car_price_predictor_pipeline, task_id=send_pipeline_report, run_id=manual__2026-02-14T17:43:22+00:00, execution_date=20260214T174322, start_date=20260214T180843, end_date=20260214T180843
+[2026-02-14T18:08:43.365+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-02-14T18:08:43.371+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-02-14T18:08:43.372+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

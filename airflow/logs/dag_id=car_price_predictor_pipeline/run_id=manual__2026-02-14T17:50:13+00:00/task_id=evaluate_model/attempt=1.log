@@ -1,0 +1,26 @@
+[2026-02-14T17:55:25.233+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-14T17:55:25.241+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.evaluate_model manual__2026-02-14T17:50:13+00:00 [queued]>
+[2026-02-14T17:55:25.244+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.evaluate_model manual__2026-02-14T17:50:13+00:00 [queued]>
+[2026-02-14T17:55:25.244+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-02-14T17:55:25.248+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): evaluate_model> on 2026-02-14 17:50:13+00:00
+[2026-02-14T17:55:25.251+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62: DeprecationWarning: This process (pid=1570) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2026-02-14T17:55:25.251+0000] {standard_task_runner.py:64} INFO - Started process 1571 to run task
+[2026-02-14T17:55:25.251+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'car_price_predictor_pipeline', 'evaluate_model', 'manual__2026-02-14T17:50:13+00:00', '--job-id', '107', '--raw', '--subdir', 'DAGS_FOLDER/car_price_ml_pipeline.py', '--cfg-path', '/tmp/tmptp07j7pw']
+[2026-02-14T17:55:25.252+0000] {standard_task_runner.py:91} INFO - Job 107: Subtask evaluate_model
+[2026-02-14T17:55:25.268+0000] {task_command.py:426} INFO - Running <TaskInstance: car_price_predictor_pipeline.evaluate_model manual__2026-02-14T17:50:13+00:00 [running]> on host 2075ebc01f0b
+[2026-02-14T17:55:25.304+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='alerts@example.com' AIRFLOW_CTX_DAG_OWNER='data-science-team' AIRFLOW_CTX_DAG_ID='car_price_predictor_pipeline' AIRFLOW_CTX_TASK_ID='evaluate_model' AIRFLOW_CTX_EXECUTION_DATE='2026-02-14T17:50:13+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-14T17:50:13+00:00'
+[2026-02-14T17:55:25.304+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-14T17:55:25.679+0000] {logging_mixin.py:188} INFO - 🔍 Évaluation du modèle...
+[2026-02-14T17:55:25.685+0000] {logging_mixin.py:188} INFO - 📡 Run ID: 78eafb552d8648e69b53d476ae02def8
+[2026-02-14T17:55:25.707+0000] {logging_mixin.py:188} INFO - 📊 R² Score: 0.0000 (min: 0.7)
+[2026-02-14T17:55:25.708+0000] {logging_mixin.py:188} INFO - 📊 RMSE: 0.5188 (max: 1.0)
+[2026-02-14T17:55:25.708+0000] {logging_mixin.py:188} INFO - 📊 MAE: 0.3872
+[2026-02-14T17:55:25.708+0000] {logging_mixin.py:188} INFO - ⚠️ Modèle ne satisfait pas les critères de qualité
+[2026-02-14T17:55:25.712+0000] {python.py:237} INFO - Done. Returned value was: {'run_id': '78eafb552d8648e69b53d476ae02def8', 'r2_score': 0.0, 'rmse': 0.5187586175091933, 'mae': 0.387170867862612, 'is_promotable': False, 'evaluation_date': '2026-02-14T17:55:25.708376'}
+[2026-02-14T17:55:25.712+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-14T17:55:25.719+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=car_price_predictor_pipeline, task_id=evaluate_model, run_id=manual__2026-02-14T17:50:13+00:00, execution_date=20260214T175013, start_date=20260214T175525, end_date=20260214T175525
+[2026-02-14T17:55:25.765+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-02-14T17:55:25.776+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-02-14T17:55:25.777+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

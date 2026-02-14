@@ -26,15 +26,20 @@ mlflow.set_experiment(EXPERIMENT_NAME)
 class CarPricePipeline:
     """Pipeline d'entraînement avec MLflow tracking"""
     
-    def __init__(self, params_file='params.yaml'):
+    def __init__(self, params_file='params.yaml', base_dir='.'):
         # Load parameters
         with open(params_file, 'r') as f:
             self.params = yaml.safe_load(f)
         
+        self.base_dir = base_dir
         self.model = None
         self.scaler = None
         self.encoders = {}
         self.target_scaler = None
+        
+        # Create necessary directories
+        os.makedirs(os.path.join(self.base_dir, 'models'), exist_ok=True)
+        os.makedirs(os.path.join(self.base_dir, 'artifacts'), exist_ok=True)
         
     def load_data(self, filepath='data/raw/avito_car_dataset_ALL.csv'):
         """Chargement des données"""
@@ -123,8 +128,9 @@ class CarPricePipeline:
             self.encoders[col] = le
         
         # Save encoders
-        joblib.dump(self.encoders, 'models/encoders.pkl')
-        mlflow.log_artifact('models/encoders.pkl')
+        encoders_path = os.path.join(self.base_dir, 'models/encoders.pkl')
+        joblib.dump(self.encoders, encoders_path)
+        mlflow.log_artifact(encoders_path)
         
         # Scale numerical features only
         self.scaler = StandardScaler()
@@ -142,18 +148,20 @@ class CarPricePipeline:
             'categorical_cols': categorical_cols,
             'numerical_cols': numerical_cols
         }
-        with open('artifacts/feature_info.json', 'w') as f:
+        feature_info_path = os.path.join(self.base_dir, 'artifacts/feature_info.json')
+        with open(feature_info_path, 'w') as f:
             json.dump(feature_info, f, indent=4)
-        mlflow.log_artifact('artifacts/feature_info.json')
+        mlflow.log_artifact(feature_info_path)
         
         # Save price scaler info
         price_scaler_info = {
             'mean': float(self.target_scaler.mean_[0]),
             'scale': float(self.target_scaler.scale_[0])
         }
-        with open('artifacts/price_scaler_info.json', 'w') as f:
+        price_scaler_path = os.path.join(self.base_dir, 'artifacts/price_scaler_info.json')
+        with open(price_scaler_path, 'w') as f:
             json.dump(price_scaler_info, f, indent=4)
-        mlflow.log_artifact('artifacts/price_scaler_info.json')
+        mlflow.log_artifact(price_scaler_path)
         
         return X_scaled, y_scaled, feature_names
     
@@ -231,8 +239,9 @@ class CarPricePipeline:
         }).sort_values('importance', ascending=False)
         
         # Save and log feature importance
-        feature_importance.to_csv('artifacts/feature_importance.csv', index=False)
-        mlflow.log_artifact('artifacts/feature_importance.csv')
+        feature_importance_csv = os.path.join(self.base_dir, 'artifacts/feature_importance.csv')
+        feature_importance.to_csv(feature_importance_csv, index=False)
+        mlflow.log_artifact(feature_importance_csv)
         
         print("\n🔝 Top 10 Features:")
         for idx, row in feature_importance.head(10).iterrows():
@@ -245,8 +254,9 @@ class CarPricePipeline:
         plt.xlabel('Importance')
         plt.title('Top 15 Feature Importances')
         plt.tight_layout()
-        plt.savefig('artifacts/feature_importance.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('artifacts/feature_importance.png')
+        feature_importance_path = os.path.join(self.base_dir, 'artifacts/feature_importance.png')
+        plt.savefig(feature_importance_path, dpi=100, bbox_inches='tight')
+        mlflow.log_artifact(feature_importance_path)
         plt.close()
         
         # Plot predictions vs actual
@@ -257,8 +267,9 @@ class CarPricePipeline:
         plt.ylabel('Predicted (scaled)')
         plt.title(f'Predictions vs Actual (Test Set)\nR² = {test_r2:.4f}')
         plt.tight_layout()
-        plt.savefig('artifacts/predictions_plot.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('artifacts/predictions_plot.png')
+        predictions_path = os.path.join(self.base_dir, 'artifacts/predictions_plot.png')
+        plt.savefig(predictions_path, dpi=100, bbox_inches='tight')
+        mlflow.log_artifact(predictions_path)
         plt.close()
         
         # Residuals plot
@@ -270,8 +281,9 @@ class CarPricePipeline:
         plt.ylabel('Residuals')
         plt.title('Residual Plot')
         plt.tight_layout()
-        plt.savefig('artifacts/residuals_plot.png', dpi=100, bbox_inches='tight')
-        mlflow.log_artifact('artifacts/residuals_plot.png')
+        residuals_path = os.path.join(self.base_dir, 'artifacts/residuals_plot.png')
+        plt.savefig(residuals_path, dpi=100, bbox_inches='tight')
+        mlflow.log_artifact(residuals_path)
         plt.close()
         
         return X_train, X_test, y_train, y_test
@@ -281,19 +293,20 @@ class CarPricePipeline:
         print("💾 Sauvegarde du modèle...")
         
         # Save with joblib (for Streamlit)
-        joblib.dump(self.model, 'models/car_model.pkl')
-        joblib.dump(self.scaler, 'models/scaler.pkl')
+        model_path = os.path.join(self.base_dir, 'models/car_model.pkl')
+        scaler_path = os.path.join(self.base_dir, 'models/scaler.pkl')
+        joblib.dump(self.model, model_path)
+        joblib.dump(self.scaler, scaler_path)
         
         # Log artifacts to MLflow
-        mlflow.log_artifact('models/car_model.pkl')
-        mlflow.log_artifact('models/scaler.pkl')
+        mlflow.log_artifact(model_path)
+        mlflow.log_artifact(scaler_path)
         
         # Log model to MLflow (for model registry)
         mlflow.sklearn.log_model(
-            self.model,
-            name="model",
-            registered_model_name="CarPricePredictor",
-            serialization_format="skops"
+            sk_model=self.model,
+            artifact_path="model",
+            registered_model_name="CarPricePredictor"
         )
         
         print("✅ Modèle sauvegardé!")

@@ -1,0 +1,22 @@
+[2026-02-14T18:02:03.426+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-14T18:02:03.438+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:51:45+00:00 [queued]>
+[2026-02-14T18:02:03.441+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:51:45+00:00 [queued]>
+[2026-02-14T18:02:03.441+0000] {taskinstance.py:2306} INFO - Starting attempt 2 of 3
+[2026-02-14T18:02:03.446+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): validate_staging_model> on 2026-02-14 17:51:45+00:00
+[2026-02-14T18:02:03.449+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62: DeprecationWarning: This process (pid=2049) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2026-02-14T18:02:03.450+0000] {standard_task_runner.py:64} INFO - Started process 2050 to run task
+[2026-02-14T18:02:03.451+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'car_price_predictor_pipeline', 'validate_staging_model', 'manual__2026-02-14T17:51:45+00:00', '--job-id', '155', '--raw', '--subdir', 'DAGS_FOLDER/car_price_ml_pipeline.py', '--cfg-path', '/tmp/tmpdqbfvh3q']
+[2026-02-14T18:02:03.453+0000] {standard_task_runner.py:91} INFO - Job 155: Subtask validate_staging_model
+[2026-02-14T18:02:03.489+0000] {task_command.py:426} INFO - Running <TaskInstance: car_price_predictor_pipeline.validate_staging_model manual__2026-02-14T17:51:45+00:00 [running]> on host 2075ebc01f0b
+[2026-02-14T18:02:03.531+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='alerts@example.com' AIRFLOW_CTX_DAG_OWNER='data-science-team' AIRFLOW_CTX_DAG_ID='car_price_predictor_pipeline' AIRFLOW_CTX_TASK_ID='validate_staging_model' AIRFLOW_CTX_EXECUTION_DATE='2026-02-14T17:51:45+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-14T17:51:45+00:00'
+[2026-02-14T18:02:03.532+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-14T18:02:04.040+0000] {logging_mixin.py:188} INFO - 🧪 Validation du modèle en Staging...
+[2026-02-14T18:02:04.045+0000] {logging_mixin.py:188} INFO - ⚠️ Aucune version à valider (modèle non promu)
+[2026-02-14T18:02:04.045+0000] {python.py:237} INFO - Done. Returned value was: skipped
+[2026-02-14T18:02:04.046+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-14T18:02:04.054+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=car_price_predictor_pipeline, task_id=validate_staging_model, run_id=manual__2026-02-14T17:51:45+00:00, execution_date=20260214T175145, start_date=20260214T180203, end_date=20260214T180204
+[2026-02-14T18:02:04.074+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-02-14T18:02:04.084+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-02-14T18:02:04.084+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

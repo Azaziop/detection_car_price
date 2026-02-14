@@ -1,0 +1,88 @@
+[2026-02-14T17:52:43.034+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-02-14T17:52:43.045+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.train_model manual__2026-02-14T17:47:37+00:00 [queued]>
+[2026-02-14T17:52:43.047+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: car_price_predictor_pipeline.train_model manual__2026-02-14T17:47:37+00:00 [queued]>
+[2026-02-14T17:52:43.047+0000] {taskinstance.py:2306} INFO - Starting attempt 2 of 3
+[2026-02-14T17:52:43.052+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): train_model> on 2026-02-14 17:47:37+00:00
+[2026-02-14T17:52:43.054+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:62: DeprecationWarning: This process (pid=886) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2026-02-14T17:52:43.055+0000] {standard_task_runner.py:64} INFO - Started process 887 to run task
+[2026-02-14T17:52:43.055+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'car_price_predictor_pipeline', 'train_model', 'manual__2026-02-14T17:47:37+00:00', '--job-id', '80', '--raw', '--subdir', 'DAGS_FOLDER/car_price_ml_pipeline.py', '--cfg-path', '/tmp/tmpbl0fs7hj']
+[2026-02-14T17:52:43.056+0000] {standard_task_runner.py:91} INFO - Job 80: Subtask train_model
+[2026-02-14T17:52:43.089+0000] {task_command.py:426} INFO - Running <TaskInstance: car_price_predictor_pipeline.train_model manual__2026-02-14T17:47:37+00:00 [running]> on host 2075ebc01f0b
+[2026-02-14T17:52:43.133+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_EMAIL='alerts@example.com' AIRFLOW_CTX_DAG_OWNER='data-science-team' AIRFLOW_CTX_DAG_ID='car_price_predictor_pipeline' AIRFLOW_CTX_TASK_ID='train_model' AIRFLOW_CTX_EXECUTION_DATE='2026-02-14T17:47:37+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-02-14T17:47:37+00:00'
+[2026-02-14T17:52:43.133+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-02-14T17:52:44.252+0000] {file_store.py:306} WARNING - Malformed experiment '1'. Detailed error Yaml file '/opt/***/project/mlflow/mlruns/1/meta.yaml' does not exist.
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/tracking/file_store.py", line 302, in search_experiments
+    exp = self._get_experiment(exp_id, view_type)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/tracking/file_store.py", line 395, in _get_experiment
+    meta = FileStore._read_yaml(experiment_dir, FileStore.META_DATA_FILE_NAME)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/tracking/file_store.py", line 1303, in _read_yaml
+    return _read_helper(root, file_name, attempts_remaining=retries)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/store/tracking/file_store.py", line 1296, in _read_helper
+    result = read_yaml(root, file_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/mlflow/utils/file_utils.py", line 303, in read_yaml
+    raise MissingConfigException(f"Yaml file '{file_path}' does not exist.")
+mlflow.exceptions.MissingConfigException: Yaml file '/opt/***/project/mlflow/mlruns/1/meta.yaml' does not exist.
+[2026-02-14T17:52:44.256+0000] {logging_mixin.py:188} INFO - 🚀 Démarrage de l'entraînement du modèle...
+[2026-02-14T17:52:44.257+0000] {logging_mixin.py:188} INFO - 📡 MLflow URI: http://172.18.0.4:5000
+[2026-02-14T17:52:44.297+0000] {logging_mixin.py:188} INFO - 📊 Données validées: 24776 lignes
+[2026-02-14T17:52:44.463+0000] {logging_mixin.py:188} INFO - 📂 Chargement des données...
+[2026-02-14T17:52:44.529+0000] {logging_mixin.py:188} INFO - ✅ Données chargées: (24776, 32)
+[2026-02-14T17:52:44.624+0000] {logging_mixin.py:188} INFO - 🔧 Prétraitement des données...
+[2026-02-14T17:52:44.629+0000] {logging_mixin.py:188} INFO -   • Origine: rempli avec mode = 'WW au Maroc'
+[2026-02-14T17:52:44.631+0000] {logging_mixin.py:188} INFO -   • Première main: rempli avec mode = 'Non'
+[2026-02-14T17:52:44.633+0000] {logging_mixin.py:188} INFO -   • État: rempli avec mode = 'Excellent'
+[2026-02-14T17:52:44.634+0000] {logging_mixin.py:188} INFO -   • Nombre de portes: rempli avec médiane = 5.0
+[2026-02-14T17:52:44.644+0000] {logging_mixin.py:188} INFO -   • Doublons supprimés: 16652
+[2026-02-14T17:52:44.691+0000] {logging_mixin.py:188} INFO -   • Outliers supprimés: 600
+[2026-02-14T17:52:44.737+0000] {logging_mixin.py:188} INFO - ✅ Shape après prétraitement: (7524, 28)
+[2026-02-14T17:52:44.737+0000] {logging_mixin.py:188} INFO - 🎯 Préparation des features...
+[2026-02-14T17:52:44.739+0000] {logging_mixin.py:188} INFO -   • Features totales: 27
+[2026-02-14T17:52:44.739+0000] {logging_mixin.py:188} INFO -   • Features catégorielles: 9
+[2026-02-14T17:52:44.739+0000] {logging_mixin.py:188} INFO -   • Features numériques: 3
+[2026-02-14T17:52:44.916+0000] {logging_mixin.py:188} INFO - 🤖 Entraînement du modèle...
+[2026-02-14T17:52:44.918+0000] {logging_mixin.py:188} INFO -   • Training set: 6019 samples
+[2026-02-14T17:52:44.918+0000] {logging_mixin.py:188} INFO -   • Test set: 1505 samples
+[2026-02-14T17:52:45.661+0000] {logging_mixin.py:188} INFO - ✅ Entraînement terminé!
+[2026-02-14T17:52:45.664+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/sklearn/ensemble/_base.py:214: UserWarning: Loky-backed parallel loops cannot be called in a multiprocessing, setting n_jobs=1
+  n_jobs = min(effective_n_jobs(n_jobs), n_estimators)
+
+[2026-02-14T17:52:45.708+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/sklearn/ensemble/_base.py:214: UserWarning: Loky-backed parallel loops cannot be called in a multiprocessing, setting n_jobs=1
+  n_jobs = min(effective_n_jobs(n_jobs), n_estimators)
+
+[2026-02-14T17:52:46.054+0000] {logging_mixin.py:188} INFO - 
+📊 Résultats:
+[2026-02-14T17:52:46.055+0000] {logging_mixin.py:188} INFO -   Train R²: 0.8689
+[2026-02-14T17:52:46.055+0000] {logging_mixin.py:188} INFO -   Test R²:  0.7299
+[2026-02-14T17:52:46.055+0000] {logging_mixin.py:188} INFO -   Test RMSE: 0.5188
+[2026-02-14T17:52:46.056+0000] {logging_mixin.py:188} INFO -   Test MAE:  0.3872
+[2026-02-14T17:52:46.080+0000] {logging_mixin.py:188} INFO - 
+🔝 Top 10 Features:
+[2026-02-14T17:52:46.080+0000] {logging_mixin.py:188} INFO -   Année-Modèle: 0.3429
+[2026-02-14T17:52:46.080+0000] {logging_mixin.py:188} INFO -   Boite de vitesses: 0.1007
+[2026-02-14T17:52:46.081+0000] {logging_mixin.py:188} INFO -   Marque: 0.0991
+[2026-02-14T17:52:46.081+0000] {logging_mixin.py:188} INFO -   Modèle: 0.0961
+[2026-02-14T17:52:46.081+0000] {logging_mixin.py:188} INFO -   Puissance fiscale: 0.0935
+[2026-02-14T17:52:46.081+0000] {logging_mixin.py:188} INFO -   Kilométrage: 0.0677
+[2026-02-14T17:52:46.081+0000] {logging_mixin.py:188} INFO -   Ville: 0.0380
+[2026-02-14T17:52:46.082+0000] {logging_mixin.py:188} INFO -   Première main: 0.0355
+[2026-02-14T17:52:46.082+0000] {logging_mixin.py:188} INFO -   Type de carburant: 0.0345
+[2026-02-14T17:52:46.082+0000] {logging_mixin.py:188} INFO -   ESP: 0.0253
+[2026-02-14T17:52:46.455+0000] {logging_mixin.py:188} INFO - 💾 Sauvegarde du modèle...
+[2026-02-14T17:52:48.761+0000] {logging_mixin.py:188} WARNING - Registered model 'CarPricePredictor' already exists. Creating a new version of this model...
+[2026-02-14T17:52:48.822+0000] {logging_mixin.py:188} WARNING - 2026/02/14 17:52:48 INFO mlflow.store.model_registry.abstract_store: Waiting up to 300 seconds for model version to finish creation. Model name: CarPricePredictor, version 2
+[2026-02-14T17:52:48.822+0000] {logging_mixin.py:188} WARNING - Created version '2' of model 'CarPricePredictor'.
+[2026-02-14T17:52:48.824+0000] {logging_mixin.py:188} INFO - ✅ Modèle sauvegardé!
+[2026-02-14T17:52:48.824+0000] {logging_mixin.py:188} INFO - ✅ Modèle entraîné - Run ID: a4b5c4a19e1a4a398ee98652fd780e1e
+[2026-02-14T17:52:48.880+0000] {python.py:237} INFO - Done. Returned value was: a4b5c4a19e1a4a398ee98652fd780e1e
+[2026-02-14T17:52:48.880+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-02-14T17:52:48.903+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=car_price_predictor_pipeline, task_id=train_model, run_id=manual__2026-02-14T17:47:37+00:00, execution_date=20260214T174737, start_date=20260214T175243, end_date=20260214T175248
+[2026-02-14T17:52:48.962+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-02-14T17:52:48.997+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-02-14T17:52:49.001+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
