@@ -199,7 +199,7 @@ class CarPricePipeline:
         self.model = RandomForestRegressor(**hyperparams)
         self.model.fit(X_train, y_train)
         
-        print("✅ Entraînement terminé!")
+        print("Entraînement terminé!")
         
         # Evaluate on training set
         y_train_pred = self.model.predict(X_train)
@@ -216,15 +216,16 @@ class CarPricePipeline:
         test_mae = mean_absolute_error(y_test, y_test_pred)
         
         # Log metrics
-        mlflow.log_metric("train_r2_score", train_r2)
+        mlflow.log_metric("train_r2", train_r2)
         mlflow.log_metric("train_mse", train_mse)
         mlflow.log_metric("train_rmse", train_rmse)
         mlflow.log_metric("train_mae", train_mae)
         
-        mlflow.log_metric("test_r2_score", test_r2)
+        mlflow.log_metric("test_r2", test_r2)
         mlflow.log_metric("test_mse", test_mse)
         mlflow.log_metric("test_rmse", test_rmse)
         mlflow.log_metric("test_mae", test_mae)
+        mlflow.log_metric("train_test_gap", train_r2 - test_r2)
         
         print("\n📊 Résultats:")
         print(f"  Train R²: {train_r2:.4f}")

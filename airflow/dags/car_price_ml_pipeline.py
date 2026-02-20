@@ -154,9 +154,23 @@ def evaluate_model(**context):
     client = MlflowClient()
     run = client.get_run(run_id)
     
-    r2_score = run.data.metrics.get('test_r2', 0.0)
-    rmse = run.data.metrics.get('test_rmse', 999999)
-    mae = run.data.metrics.get('test_mae', 999999)
+    # Debug: Afficher toutes les métriques disponibles
+    print(f"📊 Métriques disponibles: {list(run.data.metrics.keys())}")
+    
+    # Récupérer les métriques (essayer plusieurs noms possibles)
+    r2_score = (
+        run.data.metrics.get('test_r2') or 
+        run.data.metrics.get('test_r2_score') or
+        0.0
+    )
+    rmse = (
+        run.data.metrics.get('test_rmse') or 
+        999999
+    )
+    mae = (
+        run.data.metrics.get('test_mae') or 
+        999999
+    )
     
     # Critères de qualité
     MINIMUM_R2 = 0.70  # R² minimum acceptable
